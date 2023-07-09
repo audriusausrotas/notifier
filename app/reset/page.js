@@ -128,7 +128,9 @@ export default function Reset() {
   function successHandler(e) {
     e.preventDefault();
     setEmail("");
-    setStage(0);
+    setTimeout(() => {
+      setStage(0);
+    }, 2000);
     router.replace("/");
   }
 
