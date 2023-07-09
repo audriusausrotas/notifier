@@ -1,0 +1,19 @@
+.root-layout {
+  max-width: 144rem;
+  background-color: $color-bg-light;
+  margin: 5rem auto;
+  border-radius: 2rem;
+}
+
+.apps-layout {
+  display: flex;
+  gap: 3rem;
+  padding: 2rem;
+
+  &__main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+  }
+}

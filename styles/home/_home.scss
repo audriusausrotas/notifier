@@ -1,0 +1,167 @@
+.auth {
+  display: flex;
+  min-height: 85rem;
+  align-items: center;
+  border-radius: 1.5rem;
+  overflow: hidden;
+}
+
+.auth-form {
+  flex: 1;
+
+  &__container {
+    display: flex;
+    flex-direction: column;
+    gap: 2.4rem;
+    max-width: 48rem;
+    margin: auto;
+    text-align: center;
+  }
+
+  &__terms {
+    display: flex;
+    justify-content: space-between;
+
+    &--left {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    &--right {
+      color: blue;
+      cursor: pointer;
+    }
+  }
+
+  &__terms * {
+    font-size: 1.4rem;
+  }
+
+  &__terms a {
+    color: blue;
+    text-decoration: none;
+  }
+
+  &__welcome {
+    font-size: 3rem;
+    text-transform: capitalize;
+  }
+
+  &__or {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+  }
+  &__or hr {
+    flex: 1;
+    height: 0;
+  }
+
+  &__loginHandler {
+    align-self: center;
+  }
+
+  &__loginHandler span {
+    color: blue;
+  }
+
+  &__loginHandler span:hover {
+    cursor: pointer;
+  }
+}
+
+.auth-banner {
+  flex: 1;
+  margin: -2rem;
+  height: 85rem;
+  background-color: #636fd3;
+  position: relative;
+  &__bg--login {
+    background-image: url("/images/loginBg.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+
+  &__bg--register {
+    background-image: url("/images/registerBg.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-color: #636fd3;
+  }
+
+  &__logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 3rem;
+    background-color: white;
+    width: fit-content;
+    border-radius: 1rem;
+    position: absolute;
+
+    &--pos1 {
+      top: 16rem;
+      left: 6.6rem;
+    }
+
+    &--pos2 {
+      top: 20.6rem;
+      right: 6.6rem;
+    }
+  }
+
+  &__header {
+    display: flex;
+    position: absolute;
+    width: 42rem;
+
+    &--text {
+      font-size: 4.2rem;
+      color: #fff;
+      font-weight: 800;
+    }
+
+    &--pos1 {
+      top: 25rem;
+      left: 6.6rem;
+    }
+
+    &--pos2 {
+      top: 30rem;
+      right: 6.6rem;
+      text-align: end;
+    }
+  }
+
+  &__text {
+    display: flex;
+    position: absolute;
+
+    &--text {
+      color: #fff;
+      font: 1.5rem;
+    }
+
+    &--pos1 {
+      top: 40rem;
+      left: 6.6rem;
+      width: 40rem;
+    }
+
+    &--pos2 {
+      top: 43.5rem;
+      right: 6.6rem;
+      text-align: end;
+      width: fit-content;
+    }
+  }
+
+  &__cloud {
+    position: absolute;
+    top: 53.8rem;
+    right: -4.8rem;
+  }
+}
