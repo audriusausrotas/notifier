@@ -16,5 +16,6 @@ export async function middleware(req) {
   const redirectTo = await sessionCheck(path, req);
   if (redirectTo.ok)
     return NextResponse.redirect(new URL(redirectTo.to, req.url));
+
   return NextResponse.next();
 }

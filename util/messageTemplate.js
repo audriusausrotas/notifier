@@ -13,17 +13,12 @@ export default function messageTemplate(code) {
         font-weight: bold;
       }
 
-      .square {
-        display: inline-block;
-        border-width: 1px;
-        border-style: solid;
-        border-color: #F0F0F0;
-        padding: 20px;
+      .code{
         text-align: center;
         font-size: 35px;
         font-weight: bold;
-
       }
+
     </style>
     <div class="container">
       <h1 class="header">
@@ -35,11 +30,8 @@ export default function messageTemplate(code) {
       <h3>
         Please use the following code to proceed with the account verification process.
       </h3>
-      <h2 class="boxes">
-        <span class="square">${code[0]}</span>
-        <span class="square">${code[1]}</span>
-        <span class="square">${code[2]}</span>
-        <span class="square">${code[3]}</span>
+      <h2 class="code">
+        ${code}
       </h2>
     </div>
         `;

@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useRef } from "react";
 import LoadingSpinner from "@components/LoadingSpinner";
+import ResetCodeElement from "@components/ResetCodeElement";
 
 const TITLES = [
   "forgot password",
@@ -197,22 +198,13 @@ export default function Reset() {
   function pasteHandler(e) {
     e.preventDefault();
 
-    const pastedText = e.clipboardData.getData("text/plain");
+    const pastedText = e.clipboardData.getData("text/plain").trim();
     const symbols = pastedText.split("").slice(0, 4);
 
     setNr1(symbols[0] || "");
     setNr2(symbols[1] || "");
     setNr3(symbols[2] || "");
     setNr4(symbols[3] || "");
-  }
-
-  function deleteHandler(e) {
-    if (e.key === "Backspace") {
-      if (nr4 !== "") setNr4("");
-      else if (nr3 !== "") setNr3("");
-      else if (nr2 !== "") setNr2("");
-      else if (nr1 !== "") setNr1("");
-    }
   }
 
   useEffect(() => {
@@ -224,12 +216,23 @@ export default function Reset() {
     }
   }, [timer]);
 
+  function deleteHandler(e) {
+    if (stage === 1 && e.key === "Backspace") {
+      if (nr4 !== "") setNr4("");
+      else if (nr3 !== "") setNr3("");
+      else if (nr2 !== "") setNr2("");
+      else if (nr1 !== "") setNr1("");
+    }
+  }
+
   useEffect(() => {
-    if (nr1 === "") input1.current.focus();
-    else if (nr2 === "") input2.current.focus();
-    else if (nr3 === "") input3.current.focus();
-    else input4.current.focus();
-  }, [nr1, nr2, nr3, nr4]);
+    if (stage === 1) {
+      if (nr1 === "") input1.current.focus();
+      else if (nr2 === "") input2.current.focus();
+      else if (nr3 === "") input3.current.focus();
+      else input4.current.focus();
+    }
+  }, [nr1, nr2, nr3, nr4, stage]);
 
   return (
     <form className="reset">
@@ -244,8 +247,8 @@ export default function Reset() {
         <p>{TEXTS[stage]}</p>
 
         <div className="reset__container--inputs">
-          {stage !== 3 && (
-            <div className={stage === 1 ? "reset__inputs2" : "reset__inputs"}>
+          {stage !== 3 && stage !== 1 && (
+            <div className="reset__inputs">
               <InputElement
                 type={stage === 2 ? "password" : "text"}
                 label={
@@ -258,12 +261,8 @@ export default function Reset() {
                     ? "Enter new password"
                     : ""
                 }
-                length={stage === 1 ? "1" : ""}
                 value={nr1}
                 setValue={setNr1}
-                rf={input1}
-                handlePaste={pasteHandler}
-                deleteHandler={deleteHandler}
               />
 
               {stage !== 0 && (
@@ -273,44 +272,50 @@ export default function Reset() {
                   plh={stage === 2 ? "Re-type new password" : ""}
                   value={nr2}
                   setValue={setNr2}
-                  length={stage === 1 ? "1" : ""}
-                  rf={input2}
-                  handlePaste={pasteHandler}
-                  deleteHandler={deleteHandler}
                 />
-              )}
-
-              {stage === 1 && (
-                <>
-                  <InputElement
-                    type="text"
-                    value={nr3}
-                    setValue={setNr3}
-                    length="1"
-                    rf={input3}
-                    handlePaste={pasteHandler}
-                    deleteHandler={deleteHandler}
-                  />
-                  <InputElement
-                    type="text"
-                    value={nr4}
-                    setValue={setNr4}
-                    length="1"
-                    rf={input4}
-                    handlePaste={pasteHandler}
-                    deleteHandler={deleteHandler}
-                  />
-                </>
               )}
             </div>
           )}
           {stage === 1 && (
-            <div className="error">
-              {`Your code will expire in: ${Math.floor(timer / 60)}:${(
-                timer % 60
-              )
-                .toString()
-                .padStart(2, "0")}`}
+            <div className="reset__container2">
+              <div className="reset__inputs2 ">
+                <ResetCodeElement
+                  value={nr1}
+                  setValue={setNr1}
+                  rf={input1}
+                  pasteHandler={pasteHandler}
+                  deleteHandler={deleteHandler}
+                />
+                <ResetCodeElement
+                  value={nr2}
+                  setValue={setNr2}
+                  rf={input2}
+                  pasteHandler={pasteHandler}
+                  deleteHandler={deleteHandler}
+                />
+                <ResetCodeElement
+                  value={nr3}
+                  setValue={setNr3}
+                  rf={input3}
+                  pasteHandler={pasteHandler}
+                  deleteHandler={deleteHandler}
+                />
+                <ResetCodeElement
+                  value={nr4}
+                  setValue={setNr4}
+                  rf={input4}
+                  pasteHandler={pasteHandler}
+                  deleteHandler={deleteHandler}
+                />
+              </div>
+
+              <div className="error">
+                {`Your code will expire in: ${Math.floor(timer / 60)}:${(
+                  timer % 60
+                )
+                  .toString()
+                  .padStart(2, "0")}`}
+              </div>
             </div>
           )}
 

@@ -3,17 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 
-export default function InputElement({
-  type,
-  label,
-  plh,
-  value,
-  setValue,
-  length,
-  rf,
-  handlePaste,
-  deleteHandler,
-}) {
+export default function InputElement({ type, label, plh, value, setValue }) {
   const [show, setShow] = useState(false);
 
   function showPassword() {
@@ -36,13 +26,9 @@ export default function InputElement({
           id={label}
           required
           value={value}
-          maxLength={length}
           onChange={(e) => {
             setValue(e.target.value);
           }}
-          ref={rf}
-          onPaste={handlePaste}
-          onKeyDown={deleteHandler}
         />
         {type === "password" && (
           <Image
