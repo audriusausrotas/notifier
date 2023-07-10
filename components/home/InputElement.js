@@ -10,6 +10,9 @@ export default function InputElement({
   value,
   setValue,
   length,
+  rf,
+  handlePaste,
+  deleteHandler,
 }) {
   const [show, setShow] = useState(false);
 
@@ -37,6 +40,9 @@ export default function InputElement({
           onChange={(e) => {
             setValue(e.target.value);
           }}
+          ref={rf}
+          onPaste={handlePaste}
+          onKeyDown={deleteHandler}
         />
         {type === "password" && (
           <Image

@@ -6,6 +6,7 @@ import InputElement from "@components/home/InputElement";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useRef } from "react";
+import LoadingSpinner from "@components/LoadingSpinner";
 
 const TITLES = [
   "forgot password",
@@ -26,10 +27,16 @@ export default function Reset() {
   const [nr2, setNr2] = useState("");
   const [nr3, setNr3] = useState("");
   const [nr4, setNr4] = useState("");
-  const [stage, setStage] = useState(0);
+  const [stage, setStage] = useState(1);
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
   const [timer, setTimer] = useState(300);
+  const [loading, setLoading] = useState(false);
+
+  const input1 = useRef();
+  const input2 = useRef();
+  const input3 = useRef();
+  const input4 = useRef();
   const countdown = useRef(null);
   const errorTimeout = useRef(null);
   const router = useRouter();
@@ -42,6 +49,8 @@ export default function Reset() {
       return;
     }
 
+    setLoading(true);
+
     fetch("/api/resetApi", {
       method: "POST",
       headers: {
@@ -53,6 +62,8 @@ export default function Reset() {
     })
       .then((res) => res.json())
       .then((data) => {
+        setLoading(false);
+
         if (data.ok) {
           setEmail(nr1);
           clearInputs();
@@ -76,6 +87,8 @@ export default function Reset() {
       showError("Error. Try again later");
     }
 
+    setLoading(true);
+
     const code = [nr1, nr2, nr3, nr4];
 
     fetch("/api/resetApi", {
@@ -90,6 +103,8 @@ export default function Reset() {
     })
       .then((res) => res.json())
       .then((data) => {
+        setLoading(false);
+
         if (data.ok) {
           clearInputs();
           setStage(2);
@@ -115,6 +130,8 @@ export default function Reset() {
       showError("Wrong password");
     }
 
+    setLoading(true);
+
     fetch("/api/resetApi", {
       method: "PATCH",
       headers: {
@@ -128,7 +145,8 @@ export default function Reset() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
+        setLoading(false);
+
         if (data.ok) {
           clearInputs();
           setStage(3);
@@ -140,7 +158,9 @@ export default function Reset() {
 
   function successHandler(e) {
     e.preventDefault();
+
     setEmail("");
+
     setTimeout(() => {
       clearInputs();
       setStage(0);
@@ -174,6 +194,27 @@ export default function Reset() {
     setNr4("");
   }
 
+  function pasteHandler(e) {
+    e.preventDefault();
+
+    const pastedText = e.clipboardData.getData("text/plain");
+    const symbols = pastedText.split("").slice(0, 4);
+
+    setNr1(symbols[0] || "");
+    setNr2(symbols[1] || "");
+    setNr3(symbols[2] || "");
+    setNr4(symbols[3] || "");
+  }
+
+  function deleteHandler(e) {
+    if (e.key === "Backspace") {
+      if (nr4 !== "") setNr4("");
+      else if (nr3 !== "") setNr3("");
+      else if (nr2 !== "") setNr2("");
+      else if (nr1 !== "") setNr1("");
+    }
+  }
+
   useEffect(() => {
     if (timer < 1) {
       setStage(0);
@@ -182,6 +223,13 @@ export default function Reset() {
       showError("Your code has expired");
     }
   }, [timer]);
+
+  useEffect(() => {
+    if (nr1 === "") input1.current.focus();
+    else if (nr2 === "") input2.current.focus();
+    else if (nr3 === "") input3.current.focus();
+    else input4.current.focus();
+  }, [nr1, nr2, nr3, nr4]);
 
   return (
     <form className="reset">
@@ -213,6 +261,9 @@ export default function Reset() {
                 length={stage === 1 ? "1" : ""}
                 value={nr1}
                 setValue={setNr1}
+                rf={input1}
+                handlePaste={pasteHandler}
+                deleteHandler={deleteHandler}
               />
 
               {stage !== 0 && (
@@ -223,6 +274,9 @@ export default function Reset() {
                   value={nr2}
                   setValue={setNr2}
                   length={stage === 1 ? "1" : ""}
+                  rf={input2}
+                  handlePaste={pasteHandler}
+                  deleteHandler={deleteHandler}
                 />
               )}
 
@@ -233,12 +287,18 @@ export default function Reset() {
                     value={nr3}
                     setValue={setNr3}
                     length="1"
+                    rf={input3}
+                    handlePaste={pasteHandler}
+                    deleteHandler={deleteHandler}
                   />
                   <InputElement
                     type="text"
                     value={nr4}
                     setValue={setNr4}
                     length="1"
+                    rf={input4}
+                    handlePaste={pasteHandler}
+                    deleteHandler={deleteHandler}
                   />
                 </>
               )}
@@ -273,6 +333,7 @@ export default function Reset() {
           {BTN_TEXT[stage]}
         </ButtonElement>
       </div>
+      {loading && <LoadingSpinner />}
     </form>
   );
 }

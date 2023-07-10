@@ -7,32 +7,38 @@ import Link from "next/link";
 import Image from "next/image";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import LoadingSpinner from "@components/LoadingSpinner";
 
 export default function AuthForm({ login, setLogin }) {
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
   const [pass2, setPass2] = useState("");
-  const [check, setCheck] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
 
-  async function loginHandler(e) {
+  function loginHandler(e) {
     e.preventDefault();
 
-    const signInResponse = await signIn("credentials", {
+    setLoading(true);
+
+    signIn("credentials", {
       email: email,
       password: pass,
-      rememberMe: check,
+      rememberMe: rememberMe,
       redirect: false,
-    });
+    }).then((data) => {
+      setLoading(false);
 
-    if (signInResponse && !signInResponse.error) {
-      router.push("/dashboard");
-    } else {
-      console.log("Error: ", signInResponse);
-      showError("Your email or password is wrong");
-    }
+      if (data && !data.error) {
+        router.push("/dashboard");
+      } else {
+        console.log("Error: ", data);
+        showError("Your email or password is wrong");
+      }
+    });
   }
 
   function registerHandler(e) {
@@ -42,6 +48,8 @@ export default function AuthForm({ login, setLogin }) {
       showError("Passwords should match");
       return;
     }
+
+    setLoading(true);
 
     fetch("/api/registration", {
       method: "POST",
@@ -56,15 +64,19 @@ export default function AuthForm({ login, setLogin }) {
     })
       .then((res) => res.json())
       .then((data) => {
+        setLoading(false);
+
         if (data.ok) {
           clearInputs();
           setLogin("true");
-          setError("Registion successful. You can login now");
+          showError("Registion successful. You can login now");
+        } else {
+          showError(data.message);
         }
       });
   }
 
-  async function loginWithGoogle() {
+  function loginWithGoogle() {
     signIn("google", { callbackUrl: "/dashboard" });
   }
 
@@ -72,8 +84,8 @@ export default function AuthForm({ login, setLogin }) {
     setLogin((prev) => !prev);
   }
 
-  function checkHandler() {
-    setCheck((prev) => !prev);
+  function rememberMeHandler() {
+    setRememberMe((prev) => !prev);
   }
 
   function showError(err) {
@@ -133,11 +145,11 @@ export default function AuthForm({ login, setLogin }) {
               type="checkbox"
               required={login ? false : true}
               id="checkbox"
-              checked={check}
-              onChange={checkHandler}
+              checked={rememberMe}
+              onChange={rememberMeHandler}
             />
             {login ? (
-              <label htmlFor="checkbox">Remenber Me</label>
+              <label htmlFor="rememberMebox">Remenber Me</label>
             ) : (
               <label>
                 I agree to the{" "}
@@ -179,6 +191,7 @@ export default function AuthForm({ login, setLogin }) {
           </span>
         </p>
       </form>
+      {loading && <LoadingSpinner />}
     </div>
   );
 }

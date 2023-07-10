@@ -2,7 +2,9 @@
 @import "mixins";
 @import "base";
 @import "navigation";
-@import "layouts"; // @import "components";
+@import "layouts";
+@import "components";
+@import "animations";
 
 @import "home/home";
 @import "home/components";

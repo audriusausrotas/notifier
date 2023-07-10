@@ -1,0 +1,54 @@
+.loading {
+  position: fixed;
+  text-align: center;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  background-color: rgba(228, 228, 228, 0.6);
+  backdrop-filter: blur(5px);
+  overflow: hidden;
+
+  &__text {
+    font-size: 2rem;
+    font-weight: 500;
+  }
+
+  &__spinner {
+    margin-top: 12%;
+    animation: spinner 2s linear infinite;
+  }
+}
+
+.error-element {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  padding-bottom: 300px;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  background-color: rgba(228, 228, 228, 0.6);
+  backdrop-filter: blur(5px);
+  overflow: hidden;
+}
+
+.error-element h2 {
+  font-size: 4rem;
+}
+
+.error-element h3 {
+  font-size: 3rem;
+}
+
+.error {
+  color: orangered;
+  font-weight: 500;
+  font-size: 1.5rem;
+  height: 1.5rem;
+}
