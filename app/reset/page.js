@@ -27,7 +27,7 @@ export default function Reset() {
   const [nr2, setNr2] = useState("");
   const [nr3, setNr3] = useState("");
   const [nr4, setNr4] = useState("");
-  const [stage, setStage] = useState(1);
+  const [stage, setStage] = useState(0);
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
   const [timer, setTimer] = useState(300);
