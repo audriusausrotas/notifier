@@ -11,7 +11,7 @@ export default function LoadingSpinner() {
         className="loading__spinner"
       />
       <h3 className="loading__text">Wait a moment</h3>
-      <h3 className="loading__text">We're creating your account</h3>
+      <h3 className="loading__text">We are creating your account</h3>
     </div>
   );
 }
