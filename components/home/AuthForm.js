@@ -56,10 +56,10 @@ export default function AuthForm({ login, setLogin }) {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         if (data.ok) {
           clearInputs();
           setLogin("true");
+          setError("Registion successful. You can login now");
         }
       });
   }

@@ -19,6 +19,16 @@ const schema = new mongoose.Schema({
     required: false,
     default: false,
   },
+  attempts: {
+    type: Number,
+    required: false,
+    default: 4,
+  },
+  delay: {
+    type: String,
+    required: false,
+    default: null,
+  },
 });
 
 const resetShema = models.reset || model("reset", schema);

@@ -3,8 +3,9 @@
 import Image from "next/image";
 import ButtonElement from "@components/home/ButtonElement";
 import InputElement from "@components/home/InputElement";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useRef } from "react";
 
 const TITLES = [
   "forgot password",
@@ -29,11 +30,17 @@ export default function Reset() {
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
   const [timer, setTimer] = useState(300);
-
+  const countdown = useRef(null);
+  const errorTimeout = useRef(null);
   const router = useRouter();
 
   function resetHandler(e) {
     e.preventDefault();
+
+    if (!nr1.includes("@")) {
+      showError("Wrong email");
+      return;
+    }
 
     fetch("/api/resetApi", {
       method: "POST",
@@ -87,6 +94,12 @@ export default function Reset() {
           clearInputs();
           setStage(2);
         } else {
+          if (data.message.includes("again")) {
+            stopTimer();
+            clearInputs();
+            setStage(0);
+            setTimer(300);
+          }
           showError(data.message);
         }
       });
@@ -129,20 +142,27 @@ export default function Reset() {
     e.preventDefault();
     setEmail("");
     setTimeout(() => {
+      clearInputs();
       setStage(0);
     }, 2000);
     router.replace("/");
   }
 
   function startTimer() {
-    setInterval(() => {
+    stopTimer();
+    countdown.current = setInterval(() => {
       setTimer((prev) => prev - 1);
     }, 1000);
   }
 
+  function stopTimer() {
+    clearInterval(countdown.current);
+  }
+
   function showError(err) {
     setError(err);
-    setTimeout(() => {
+    clearTimeout(errorTimeout.current);
+    errorTimeout.current = setTimeout(() => {
       setError("");
     }, 3000);
   }
@@ -153,6 +173,15 @@ export default function Reset() {
     setNr3("");
     setNr4("");
   }
+
+  useEffect(() => {
+    if (timer < 1) {
+      setStage(0);
+      setTimer(300);
+      clearInputs();
+      showError("Your code has expired");
+    }
+  }, [timer]);
 
   return (
     <form className="reset">
@@ -217,13 +246,11 @@ export default function Reset() {
           )}
           {stage === 1 && (
             <div className="error">
-              {timer > 0
-                ? `Your code will expire in: ${Math.floor(timer / 60)}:${(
-                    timer % 60
-                  )
-                    .toString()
-                    .padStart(2, "0")}`
-                : "The verification code has expired."}
+              {`Your code will expire in: ${Math.floor(timer / 60)}:${(
+                timer % 60
+              )
+                .toString()
+                .padStart(2, "0")}`}
             </div>
           )}
 

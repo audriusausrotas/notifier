@@ -18,6 +18,7 @@ export default async function TopBar({ user }) {
 
   useEffect(() => {
     dispatch(userActions.addUser(user));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   return (

@@ -4,15 +4,9 @@ import userShema from "@schemas/userSchema";
 import resetSchema from "@schemas/resetSchema";
 import bcrypt from "bcrypt";
 import sendEmail from "@util/sendEmail";
+import generateCode from "@util/generateCode";
 
-function generateCode() {
-  let code = [];
-  for (let i = 0; i < 4; i++) {
-    const number = Math.round(Math.random() * 9);
-    code.push(number);
-  }
-  return code;
-}
+///////////////////////////////////////////////////////////
 
 export async function POST(req) {
   const { email } = await req.json();
@@ -32,6 +26,23 @@ export async function POST(req) {
   const code = generateCode();
   const currentDate = new Date();
   const endTime = new Date(currentDate.getTime() + 5 * 60000);
+  const delayTime = new Date(resetExists?.delay);
+
+  if (resetExists?.delay) {
+    if (currentDate > delayTime) {
+      resetExists.delay = null;
+      await resetExists.save();
+    } else {
+      const ms = delayTime - currentDate;
+      const minutes = Math.floor(ms / 60000);
+      const seconds = Math.floor((ms % 60000) / 1000);
+
+      return NextResponse.json({
+        message: `You can try again in ${minutes}:${seconds} `,
+        ok: false,
+      });
+    }
+  }
 
   const resetObj = new resetSchema({
     code: code.join(""),
@@ -59,50 +70,94 @@ export async function POST(req) {
   return NextResponse.json({ message: "code send", ok: true });
 }
 
+//////////////////////////////////////////////////////////////
+
 export async function PUT(req) {
   const { userCode, email } = await req.json();
 
-  if (!email) NextResponse.json({ message: "wrong email", ok: false });
+  if (!email) return NextResponse.json({ message: "wrong email", ok: false });
 
   const resetExists = await resetSchema.findOne({ email });
 
   if (!resetExists)
-    NextResponse.json({ message: "Something went wrong", ok: false });
+    return NextResponse.json({ message: "Something went wrong", ok: false });
 
-  const currentCode = resetExists.code;
-  const endTime = resetExists.time;
+  if (!resetExists.code)
+    return NextResponse.json({
+      message: "Please restart verification process",
+      ok: false,
+    });
+
+  const currentCode = resetExists.code.toLowerCase();
+  const endTime = new Date(resetExists.time);
+  const delayTime = new Date(resetExists.delay);
   const currentDate = new Date();
 
   if (currentDate > endTime) {
     await resetSchema.deleteOne({ email });
     return NextResponse.json({ message: "Time has expired", ok: false });
   }
+  //check if there are no temporal ban
+  if (resetExists.delay) {
+    if (currentDate > delayTime) {
+      resetExists.delay = null;
+      await resetExists.save();
+    } else {
+      const ms = delayTime - currentDate;
+      const minutes = Math.floor(ms / 60000);
+      const seconds = Math.floor((ms % 60000) / 1000);
+      return NextResponse.json({
+        message: `You can try again in ${minutes}:${seconds}`,
+        ok: false,
+      });
+    }
+  }
 
-  if (userCode !== currentCode) {
-    return NextResponse.json({ message: "Wrong code", ok: false });
+  if (userCode.toLowerCase() !== currentCode) {
+    if (resetExists.attempts > 1) {
+      // check if there are more attempts
+      resetExists.attempts = resetExists.attempts - 1;
+      await resetExists.save();
+      return NextResponse.json({
+        message: `Wrong code. You have ${resetExists.attempts} attempt${
+          resetExists.attempts === 1 ? "" : "s"
+        } left`,
+        ok: false,
+      });
+    } else {
+      //is there are no more attempts, adds temporal ban
+      const endTime = new Date(currentDate.getTime() + 5 * 60000);
+      resetExists.delay = endTime;
+      resetExists.attempts = 4;
+      await resetExists.save();
+
+      return NextResponse.json({
+        message: `wrong code. You can try again in 5 minutes`,
+        ok: false,
+      });
+    }
   }
 
   resetExists.passed = true;
   await resetExists.save();
 
-  return NextResponse.json(
-    { message: "code confirmed", ok: true },
-    { status: 200 }
-  );
+  return NextResponse.json({ message: "code confirmed", ok: true });
 }
+
+////////////////////////////////////////////////////////
 
 export async function PATCH(req) {
   const { pass, email } = await req.json();
 
-  if (!pass) NextResponse.json({ message: "Wrong password", ok: false });
+  if (!pass) return NextResponse.json({ message: "Wrong password", ok: false });
 
   if (!email)
-    NextResponse.json({ message: "Error. Try again later", ok: false });
+    return NextResponse.json({ message: "Error. Try again later", ok: false });
 
   const resetExists = await resetSchema.findOne({ email });
 
   if (!resetExists || !resetExists.passed)
-    NextResponse.json({ message: "Error. Try again later", ok: false });
+    return NextResponse.json({ message: "Error. Try again later", ok: false });
 
   connectDB();
 
@@ -116,7 +171,7 @@ export async function PATCH(req) {
   );
 
   if (!user)
-    NextResponse.json({ message: "Error. Try again later", ok: false });
+    return NextResponse.json({ message: "Error. Try again later", ok: false });
 
   await resetSchema.deleteOne({ email });
 
