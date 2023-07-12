@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import InputElement from "./InputElement";
 import ButtonElement from "./ButtonElement";
 import Link from "next/link";
@@ -16,6 +16,7 @@ export default function AuthForm({ login, setLogin }) {
   const [rememberMe, setRememberMe] = useState(true);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [passStrenght, setPassStrenght] = useState(0);
 
   const router = useRouter();
 
@@ -101,6 +102,45 @@ export default function AuthForm({ login, setLogin }) {
     setPass2("");
   }
 
+  useEffect(() => {
+    if (
+      pass.length > 6 &&
+      checkUpper(pass) &&
+      checkNumber(pass) &&
+      checkSymbol(pass)
+    )
+      setPassStrenght(4);
+    else if (
+      (pass.length > 6 && checkUpper(pass) && checkNumber(pass)) ||
+      (pass.length > 6 && checkSymbol(pass) && checkNumber(pass)) ||
+      (pass.length > 6 && checkUpper(pass) && checkSymbol(pass))
+    )
+      setPassStrenght(3);
+    else if (
+      (pass.length > 6 && checkUpper(pass)) ||
+      (pass.length > 6 && checkNumber(pass)) ||
+      (pass.length > 6 && checkSymbol(pass))
+    )
+      setPassStrenght(2);
+    else if (pass.length > 6) setPassStrenght(1);
+    else setPassStrenght(0);
+  }, [pass]);
+
+  function checkUpper(string) {
+    const uppercasePattern = /[A-Z]/;
+    return uppercasePattern.test(string);
+  }
+
+  function checkNumber(string) {
+    const numberPattern = /\d/;
+    return numberPattern.test(string);
+  }
+
+  function checkSymbol(string) {
+    const symbolPattern = /[~!@#$%^&*()_+}{|":?><]/;
+    return symbolPattern.test(string);
+  }
+
   return (
     <div
       className="auth-form"
@@ -120,14 +160,41 @@ export default function AuthForm({ login, setLogin }) {
           value={email}
           setValue={setEmail}
         />
+        <div>
+          <InputElement
+            type="password"
+            label="password"
+            plh="Enter your password"
+            value={pass}
+            setValue={setPass}
+          />
+          <div
+            className="auth-form__strenght"
+            style={{
+              width:
+                passStrenght === 0
+                  ? "0"
+                  : passStrenght === 1
+                  ? "25%"
+                  : passStrenght === 2
+                  ? "50%"
+                  : passStrenght === 3
+                  ? "75%"
+                  : "100%",
 
-        <InputElement
-          type="password"
-          label="password"
-          plh="Enter your password"
-          value={pass}
-          setValue={setPass}
-        />
+              backgroundColor:
+                passStrenght === 0
+                  ? ""
+                  : passStrenght === 1
+                  ? "orangered"
+                  : passStrenght === 2
+                  ? "orange"
+                  : passStrenght === 3
+                  ? "lightgreen"
+                  : "green",
+            }}
+          ></div>
+        </div>
 
         {!login && (
           <InputElement

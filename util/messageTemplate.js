@@ -3,7 +3,6 @@ export default function messageTemplate(code) {
     <style>
       .container {
         background-color: white;
-        padding: 20px;
         text-align: center;
         margin-top: 100px;
       }

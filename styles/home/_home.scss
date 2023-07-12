@@ -69,6 +69,14 @@
   &__loginHandler span:hover {
     cursor: pointer;
   }
+
+  &__strenght {
+    width: 0;
+    height: 1rem;
+    border-radius: 1rem;
+    background-color: orangered;
+    transition: width 0.5s linear;
+  }
 }
 
 .auth-banner {
