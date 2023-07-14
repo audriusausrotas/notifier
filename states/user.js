@@ -11,6 +11,9 @@ export const userSlice = createSlice({
     addUser: (state, action) => {
       state.user = action.payload.user;
     },
+    deleteUser: (state, action) => {
+      state.user = {};
+    },
   },
 });
 

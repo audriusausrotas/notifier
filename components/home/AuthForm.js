@@ -17,6 +17,8 @@ export default function AuthForm({ login, setLogin }) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [passStrenght, setPassStrenght] = useState(0);
+  const [passColor, setpassColor] = useState("");
+  const [passWidth, setPassWidth] = useState("");
 
   const router = useRouter();
 
@@ -102,43 +104,44 @@ export default function AuthForm({ login, setLogin }) {
     setPass2("");
   }
 
+  function widthHandler() {
+    let strenght = 0;
+    let color = "";
+
+    if (checkUpper()) strenght += 20;
+    if (checkNumber()) strenght += 20;
+    if (checkSymbol()) strenght += 20;
+    if (pass.length > 5) strenght += 15;
+    if (pass.length > 7) strenght += 15;
+    if (pass.length > 9) strenght += 10;
+
+    if (strenght < 20) color = "#ff1a1a";
+    else if (strenght <= 40) color = "#ff531a";
+    else if (strenght <= 60) color = "#ff8c1a";
+    else if (strenght <= 80) color = "#00cc00";
+    else if (strenght === 100) color = "#009933";
+
+    setPassWidth(strenght + "%");
+    setpassColor(color);
+  }
+
   useEffect(() => {
-    if (
-      pass.length > 6 &&
-      checkUpper(pass) &&
-      checkNumber(pass) &&
-      checkSymbol(pass)
-    )
-      setPassStrenght(4);
-    else if (
-      (pass.length > 6 && checkUpper(pass) && checkNumber(pass)) ||
-      (pass.length > 6 && checkSymbol(pass) && checkNumber(pass)) ||
-      (pass.length > 6 && checkUpper(pass) && checkSymbol(pass))
-    )
-      setPassStrenght(3);
-    else if (
-      (pass.length > 6 && checkUpper(pass)) ||
-      (pass.length > 6 && checkNumber(pass)) ||
-      (pass.length > 6 && checkSymbol(pass))
-    )
-      setPassStrenght(2);
-    else if (pass.length > 6) setPassStrenght(1);
-    else setPassStrenght(0);
+    widthHandler();
   }, [pass]);
 
-  function checkUpper(string) {
+  function checkUpper() {
     const uppercasePattern = /[A-Z]/;
-    return uppercasePattern.test(string);
+    return uppercasePattern.test(pass);
   }
 
-  function checkNumber(string) {
+  function checkNumber() {
     const numberPattern = /\d/;
-    return numberPattern.test(string);
+    return numberPattern.test(pass);
   }
 
-  function checkSymbol(string) {
+  function checkSymbol() {
     const symbolPattern = /[~!@#$%^&*()_+}{|":?><]/;
-    return symbolPattern.test(string);
+    return symbolPattern.test(pass);
   }
 
   return (
@@ -171,27 +174,8 @@ export default function AuthForm({ login, setLogin }) {
           <div
             className="auth-form__strenght"
             style={{
-              width:
-                passStrenght === 0
-                  ? "0"
-                  : passStrenght === 1
-                  ? "25%"
-                  : passStrenght === 2
-                  ? "50%"
-                  : passStrenght === 3
-                  ? "75%"
-                  : "100%",
-
-              backgroundColor:
-                passStrenght === 0
-                  ? ""
-                  : passStrenght === 1
-                  ? "orangered"
-                  : passStrenght === 2
-                  ? "orange"
-                  : passStrenght === 3
-                  ? "lightgreen"
-                  : "green",
+              width: passWidth,
+              backgroundColor: passColor,
             }}
           ></div>
         </div>
