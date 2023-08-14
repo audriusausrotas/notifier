@@ -6,8 +6,8 @@ import InputElement from "@components/home/InputElement";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useRef } from "react";
-import LoadingSpinner from "@components/LoadingSpinner";
-import ResetCodeElement from "@components/ResetCodeElement";
+import LoadingSpinner from "@components/components/LoadingSpinner";
+import ResetCodeElement from "@components/components/ResetCodeElement";
 
 const TITLES = [
   "forgot password",

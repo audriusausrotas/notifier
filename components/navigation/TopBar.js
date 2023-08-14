@@ -5,10 +5,11 @@ import { useEffect, useState } from "react";
 import { signOut } from "next-auth/react";
 import { useDispatch } from "react-redux";
 import { userActions } from "@states/user";
+import ProfileModal from "./ProfileModal";
 
-export default async function TopBar({ user }) {
+export default function TopBar({ user }) {
   const [value, setValue] = useState("");
-  const [modal, setModal] = useState(true);
+  const [modal, setModal] = useState(false);
 
   function signOutHandler() {
     signOut({ redirect: true });
@@ -17,7 +18,7 @@ export default async function TopBar({ user }) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(userActions.addUser(user));
+    if (!user.email) dispatch(userActions.addUser(user));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
@@ -47,7 +48,12 @@ export default async function TopBar({ user }) {
           width={24}
           height={24}
         />
-        <div className="top-bar__user">
+        <div
+          className="top-bar__user"
+          onClick={() => {
+            setModal((prev) => !prev);
+          }}
+        >
           <h2>
             {user?.firstName} {user?.lastName}
           </h2>
@@ -58,18 +64,11 @@ export default async function TopBar({ user }) {
               alt="users avatar"
               width={24}
               height={24}
-              onClick={() => {
-                setModal((prev) => !prev);
-              }}
             />
           )}
 
           {modal && (
-            <div className="top-bar__modal">
-              <button type="button" onClick={signOutHandler}>
-                Sign Out
-              </button>
-            </div>
+            <ProfileModal signOutHandler={signOutHandler} user={user} />
           )}
         </div>
       </div>

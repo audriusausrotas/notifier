@@ -1,0 +1,29 @@
+.notes {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  gap: 2rem;
+
+  &__title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 5.5rem;
+  }
+
+  &__title h2 {
+    font-size: 2rem;
+    font-weight: 500;
+  }
+
+  &__filters {
+    display: flex;
+    align-items: center;
+    gap: 4rem;
+  }
+
+  &__filters * {
+    fill: red;
+  }
+}

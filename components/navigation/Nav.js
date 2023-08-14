@@ -7,7 +7,6 @@ import NavLink from "./NavLink";
 export default function Nav() {
   const [open, setOpen] = useState(true);
 
-
   return (
     <nav className={`nav ${open ? "" : "nav__container--min"}`}>
       <div className="nav__logo">
@@ -83,12 +82,6 @@ export default function Nav() {
           open={open}
         />
       </div>
-      <NavLink
-        href="/settings"
-        icon="/icons/icon9.svg"
-        name="settings"
-        open={open}
-      />
     </nav>
   );
 }

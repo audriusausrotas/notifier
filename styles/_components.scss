@@ -1,6 +1,8 @@
-.loading {
+.modal {
   position: fixed;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   width: 100vw;
   height: 100vh;
   top: 0;
@@ -9,6 +11,10 @@
   background-color: rgba(228, 228, 228, 0.6);
   backdrop-filter: blur(5px);
   overflow: hidden;
+}
+
+.loading {
+  text-align: center;
 
   &__text {
     font-size: 2rem;
@@ -51,4 +57,80 @@
   font-weight: 500;
   font-size: 1.5rem;
   height: 1.5rem;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  border: none;
+  font-size: 1.6rem;
+  font-weight: 600;
+
+  &--default {
+    background-color: $color_bg_btn;
+    color: #fff;
+    gap: 0.2rem;
+    border-radius: 1.5rem;
+    align-self: flex-end;
+    padding: 0.6rem 2rem;
+    min-width: 14rem;
+  }
+
+  &--filters {
+    padding: 1rem;
+    border-radius: 1rem;
+    gap: 1rem;
+  }
+
+  &--menu {
+    background-color: transparent;
+    width: 100%;
+    gap: 0.8rem;
+    padding: 0.5rem 0;
+  }
+
+  &--selected {
+    background-color: $color_bg_btn;
+    color: #fff;
+  }
+
+  &--unselected {
+    background-color: transparent;
+    color: $color-text;
+  }
+
+  &:hover {
+    cursor: pointer;
+    background: $color-bg-dark;
+    color: #fff;
+  }
+}
+
+.success {
+  display: flex;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  height: 5.6rem;
+
+  &__green {
+    background-color: green;
+    width: 1rem;
+  }
+
+  &__element {
+    display: flex;
+    align-items: center;
+    padding: 1.8rem 3rem;
+    gap: 2rem;
+    background: #fff;
+  }
+
+  &__element p {
+    font-size: 1.4rem;
+  }
+}
+
+.categories {
 }
